@@ -34,11 +34,11 @@ describe("getCats", () => {
     });
 
     // Call the function
-    const result = await getCats({ limit: 2 });
+    const result = await getCats({ limit: 2, page: 1 });
 
     // Verify the fetch was called with correct parameters
     expect(global.fetch).toHaveBeenCalledWith(
-      "https://api.thecatapi.com/v1/images/search?limit=2",
+      "https://api.thecatapi.com/v1/images/search?limit=2&page=1",
       {
         headers: {
           "x-api-key": process.env.CAT_API_KEY,
@@ -55,6 +55,6 @@ describe("getCats", () => {
     (global.fetch as jest.Mock).mockRejectedValueOnce(new Error("API Error"));
 
     // Verify that the function throws an error
-    await expect(getCats({ limit: 1 })).rejects.toThrow("API Error");
+    await expect(getCats({ limit: 1, page: 1 })).rejects.toThrow("API Error");
   });
 });

@@ -17,7 +17,7 @@ export function withLogging<T extends (...args: any[]) => any>(f: T): T {
       };
 
       console.info(
-        `[Service] ${f.name} [${success ? "✅ SUCCESS" : "❌ FAILED"}]`,
+        `Name: ${f.name} [${success ? "✅ SUCCESS" : "❌ FAILED"}]`,
         extra
       );
     }

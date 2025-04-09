@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nextjs Practice
 
-## Getting Started
+### 함수의 인자를 logging 하는 기능을 추가하는 `withLogging` 함수
 
-First, run the development server:
+Generic 을 입력하는 부분이 생각보다 까다롭고 복잡해서 정리해둔다.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```typescript
+export function withLogging<T extends (...args: any[]) => any>(f: T): T {
+  return (async (...args: Parameters<T>): Promise<ReturnType<T>> => {
+    let rtn = null;
+    let success = false;
+    try {
+      rtn = await f(...args);
+      success = true;
+      return rtn;
+    } catch (e: any) {
+      success = false;
+      throw e;
+    } finally {
+      const extra = {
+        eventId: f.name,
+        success,
+        args: args,
+      };
+
+      console.info(
+        `Name: ${f.name} [${success ? "✅ SUCCESS" : "❌ FAILED"}]`,
+        extra
+      );
+    }
+  }) as T;
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+함수 호출 시 `args` 값을 전부 logging 하고 싶은 경우 이 함수를 사용할 수 있다.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+아래와 같이 사용한다.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```typescript
+const getCats = withLogging(fetchCats);
+```
 
-## Learn More
+`withLogging` 함수로 감싼 getCats 함수는 인자에 입력되는 args 가 withLogging 내에서 logging 하게 된다.
 
-To learn more about Next.js, take a look at the following resources:
+production 환경에서 `f.name` 값이 제대로 출력되지 않는다.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+next.config.ts 파일에 아래와 같이 설정한다.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```typescript
+const nextConfig: NextConfig = {
+  /* other options... */
+  experimental: {
+    serverMinification: false,
+  },
+};
+```
