@@ -1,4 +1,4 @@
-import { getCats } from "@/lib/cats-api";
+import { CatsApi } from "@/lib/cats-api";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
 }
 
 async function getData(limit: number, page: number) {
-  const cats = await getCats({ limit, page });
+  const cats = await CatsApi.getCats({ limit, page });
   const date = new Date();
 
   return {

@@ -1,9 +1,9 @@
-import { getCats } from "@/lib/cats-api";
+import { CatsApi } from "@/lib/cats-api";
 
 // Mock the fetch function
 global.fetch = jest.fn();
 
-describe("getCats", () => {
+describe("CatsApi", () => {
   beforeEach(() => {
     // Clear all mocks before each test
     jest.clearAllMocks();
@@ -34,7 +34,7 @@ describe("getCats", () => {
     });
 
     // Call the function
-    const result = await getCats({ limit: 2, page: 1 });
+    const result = await CatsApi.getCats({ limit: 2, page: 1 });
 
     // Verify the fetch was called with correct parameters
     expect(global.fetch).toHaveBeenCalledWith(
@@ -55,6 +55,8 @@ describe("getCats", () => {
     (global.fetch as jest.Mock).mockRejectedValueOnce(new Error("API Error"));
 
     // Verify that the function throws an error
-    await expect(getCats({ limit: 1, page: 1 })).rejects.toThrow("API Error");
+    await expect(CatsApi.getCats({ limit: 1, page: 1 })).rejects.toThrow(
+      "API Error"
+    );
   });
 });

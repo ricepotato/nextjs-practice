@@ -23,3 +23,15 @@ export function withLogging<T extends (...args: any[]) => any>(f: T): T {
     }
   }) as T;
 }
+
+export function Log() {
+  return function (
+    target: any,
+    propertyKey: string,
+    descriptor: PropertyDescriptor
+  ) {
+    const originalMethod = descriptor.value;
+    descriptor.value = withLogging(originalMethod);
+    return descriptor;
+  };
+}
