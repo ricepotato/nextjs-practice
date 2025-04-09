@@ -1,4 +1,4 @@
-import { getCats } from "../cats-api";
+import { getCats } from "@/lib/cats-api";
 
 // Mock the fetch function
 global.fetch = jest.fn();

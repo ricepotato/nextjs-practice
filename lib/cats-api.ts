@@ -24,5 +24,4 @@ async function fetchCats({
   );
   return await resp.json();
 }
-
 export const getCats = withLogging(fetchCats);
