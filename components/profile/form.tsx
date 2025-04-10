@@ -1,31 +1,19 @@
 "use client";
 
+import useActionStateWithMutate from "@/hooks/useActionStateWithMutate";
 import { saveProfile as saveProfileAction } from "@/lib/actions";
-import { useActionState, useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function ProfileForm() {
-  const [result, action, isPending] = useActionState(
+  const [result, action, isPending, setResult] = useActionStateWithMutate(
     saveProfileAction,
     undefined
   );
 
-  const [fieldErrors, setFieldErrors] = useState<{
-    name?: string[];
-    email?: string[];
-  }>({});
-
-  useEffect(() => {
-    if (result === undefined) {
-      return;
-    }
-
-    if (result.fieldErrors) {
-      setFieldErrors(result.fieldErrors);
-    }
-  }, [result]);
-
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+
+  console.log("ProfileForm");
 
   return (
     <form className="space-y-2" action={action}>
@@ -46,7 +34,7 @@ export default function ProfileForm() {
           onChange={(e) => setName(e.target.value)}
         />
         <div className="h-5 mt-1">
-          <p className="text-xs text-red-600">{fieldErrors.name}</p>
+          <p className="text-xs text-red-600">{result?.fieldErrors?.name}</p>
         </div>
       </div>
       <div>
@@ -66,7 +54,7 @@ export default function ProfileForm() {
           onChange={(e) => setEmail(e.target.value)}
         />
         <div className="h-5 mt-1">
-          <p className="text-xs text-red-600">{fieldErrors.email}</p>
+          <p className="text-xs text-red-600">{result?.fieldErrors?.email}</p>
         </div>
       </div>
       <button
@@ -75,7 +63,7 @@ export default function ProfileForm() {
         onClick={() => {
           setName("");
           setEmail("");
-          setFieldErrors({});
+          setResult(undefined);
         }}
       >
         Reset
