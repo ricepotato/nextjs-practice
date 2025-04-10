@@ -1,7 +1,7 @@
 "use client";
 
 import { saveProfile as saveProfileAction } from "@/lib/actions";
-import { useActionState } from "react";
+import { useActionState, useEffect, useState } from "react";
 
 export default function ProfileForm() {
   const [result, action, isPending] = useActionState(
@@ -9,8 +9,26 @@ export default function ProfileForm() {
     undefined
   );
 
+  const [fieldErrors, setFieldErrors] = useState<{
+    name?: string[];
+    email?: string[];
+  }>({});
+
+  useEffect(() => {
+    if (result === undefined) {
+      return;
+    }
+
+    if (result.fieldErrors) {
+      setFieldErrors(result.fieldErrors);
+    }
+  }, [result]);
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+
   return (
-    <form className="space-y-6" action={action}>
+    <form className="space-y-2" action={action}>
       <div>
         <label
           htmlFor="name"
@@ -24,9 +42,11 @@ export default function ProfileForm() {
           name="name"
           placeholder="Enter your name"
           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
         />
         <div className="h-5 mt-1">
-          <p className="text-sm text-red-600">{result?.error?.name}</p>
+          <p className="text-xs text-red-600">{fieldErrors.name}</p>
         </div>
       </div>
       <div>
@@ -42,11 +62,24 @@ export default function ProfileForm() {
           name="email"
           placeholder="Enter your email"
           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
         <div className="h-5 mt-1">
-          <p className="text-sm text-red-600">{result?.error?.email}</p>
+          <p className="text-xs text-red-600">{fieldErrors.email}</p>
         </div>
       </div>
+      <button
+        type="button"
+        className="w-full flex justify-center py-2 px-4 border  border-transparent rounded-md shadow-sm cursor-pointer text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        onClick={() => {
+          setName("");
+          setEmail("");
+          setFieldErrors({});
+        }}
+      >
+        Reset
+      </button>
       <button
         type="submit"
         className="w-full flex justify-center py-2 px-4 border  border-transparent rounded-md shadow-sm cursor-pointer text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

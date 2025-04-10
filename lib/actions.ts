@@ -18,7 +18,7 @@ export async function saveProfile(
   formData: FormData
 ): Promise<{
   success: boolean;
-  error?: {
+  fieldErrors?: {
     name?: string[];
     email?: string[];
   };
@@ -31,7 +31,7 @@ export async function saveProfile(
   if (!profile.success) {
     return {
       success: false,
-      error: profile.error.flatten().fieldErrors,
+      fieldErrors: profile.error.flatten().fieldErrors,
     };
   }
 
